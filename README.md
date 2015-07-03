@@ -1,4 +1,4 @@
-# alexa-appkit-lights
+# alexa-skills-kit-endpoint
 
-Simple app to toggle your Lifx bulbs from Amazon Echo.
+Simple Flask endpoint for a custom Alexa Skill
 
