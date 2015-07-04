@@ -1,13 +1,11 @@
-from flask import Flask, make_response, render_template, request
 import logging
 import json
-import requests
-import config
 
-app = Flask(__name__)
+from flask import request
+
+from app import app
 
 CONTENT_TYPE = {'Content-Type': 'application/json;charset=UTF-8'}
-LIFX_ENDPOINT = 'https://api.lifx.com/v1beta1'
 
 def generate_response(output_speech, card_title="", card_subtitle="", card_content="", session_attributes={}, should_end_session=True):
     response = {
@@ -50,20 +48,14 @@ def post():
 
     # Query API to convert name to Symbol
     if action == "on":
-        response = requests.put(LIFX_ENDPOINT + '/lights/all/power', auth=config.AUTH, data={'state': 'on'}).json()
+        #response = requests.put(LIFX_ENDPOINT + '/lights/all/power', auth=config.AUTH, data={'state': 'on'}).json()
 
-        if response and 'error' in response and response['error']:
-            speech = response['error']
-        else:
-            speech = "Lights on"
+        speech = "Lights on"
 
     elif action == "off":
-        response = requests.put(LIFX_ENDPOINT + '/lights/all/power', auth=config.AUTH, data={'state': 'off'}).json()
+        #response = requests.put(LIFX_ENDPOINT + '/lights/all/power', auth=config.AUTH, data={'state': 'off'}).json()
 
-        if response and 'error' in response and response['error']:
-            speech = response['error']
-        else:
-            speech = "Lights off"
+        speech = "Lights off"
 
     else:
         speech = "Action unknown"
@@ -76,8 +68,3 @@ def post():
 
     logging.info(json.dumps(json.loads(response), indent=4, sort_keys=False))
     return response, 200, CONTENT_TYPE
-
-
-if __name__ == '__main__':
-    app.run()
-

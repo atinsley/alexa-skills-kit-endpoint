@@ -1,8 +1,14 @@
-import logging
 import unittest
-from test import BaseTestCase
+import json
 
-class TestPostFromAlexa(BaseTestCase):
+from app import app
+
+
+class TestPostFromAlexa(unittest.TestCase):
+    def setUp(self):
+        app.config['TESTING'] = True
+        self.app = app.test_client()
+
     def test_turn_on(self):
         request_body = {
             "session": {
@@ -28,10 +34,14 @@ class TestPostFromAlexa(BaseTestCase):
             }
         }
 
-        response = self.app.post_json('/', request_body)
+        response = self.app.post('/',
+                                data=json.dumps(request_body),
+                                content_type='application/json')
+
         self.assertEqual(response.status, "200 OK")
-        self.assertNotEqual(response.json_body, None)
-        self.assertNotEqual(response.json_body["response"]["outputSpeech"]["text"], "")
+        self.assertNotEqual(response.data, None)
+        parsed_json = json.loads(response.data)
+        self.assertNotEqual(parsed_json["response"]["outputSpeech"]["text"], "")
 
     def test_turn_off(self):
         request_body = {
@@ -58,8 +68,10 @@ class TestPostFromAlexa(BaseTestCase):
             }
         }
 
-        response = self.app.post_json('/', request_body)
+        response = self.app.post('/',
+                                data=json.dumps(request_body),
+                                content_type='application/json')
         self.assertEqual(response.status, "200 OK")
-        self.assertNotEqual(response.json_body, None)
-        self.assertNotEqual(response.json_body["response"]["outputSpeech"]["text"], "")
-
+        self.assertNotEqual(response.data, None)
+        parsed_json = json.loads(response.data)
+        self.assertNotEqual(parsed_json["response"]["outputSpeech"]["text"], "")
